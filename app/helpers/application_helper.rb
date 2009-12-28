@@ -60,7 +60,7 @@ module ApplicationHelper
 
   # Displays a link to +issue+ with its subject.
   # Examples:
-  # 
+  #
   #   link_to_issue(issue)                        # => Defect #6: This is the subject
   #   link_to_issue(issue, :truncate => 6)        # => Defect #6: This i...
   #   link_to_issue(issue, :subject => false)     # => Defect #6
@@ -77,7 +77,7 @@ module ApplicationHelper
         subject = truncate(subject, :length => options[:truncate])
       end
     end
-    s = link_to "#{issue.tracker} ##{issue.id}", {:controller => "issues", :action => "show", :id => issue}, 
+    s = link_to "#{issue.tracker} ##{issue.id}", {:controller => "issues", :action => "show", :id => issue},
                                                  :class => issue.css_classes,
                                                  :title => title
     s << ": #{h subject}" if subject
@@ -124,15 +124,15 @@ module ApplicationHelper
     html_options[:onclick] = "promptToRemote('#{text}', '#{param}', '#{url_for(url)}'); return false;"
     link_to name, {}, html_options
   end
-  
+
   def format_activity_title(text)
     h(truncate_single_line(text, :length => 100))
   end
-  
+
   def format_activity_day(date)
     date == Date.today ? l(:label_today).titleize : format_date(date)
   end
-  
+
   def format_activity_description(text)
     h(truncate(text.to_s, :length => 120).gsub(%r{[\r\n]*<(pre|code)>.*$}m, '...')).gsub(/[\r\n]+/, "<br />")
   end
@@ -144,7 +144,7 @@ module ApplicationHelper
       h("#{version.project} - #{version}")
     end
   end
-  
+
   def due_date_distance_in_words(date)
     if date
       l((date < Date.today ? :label_roadmap_overdue : :label_roadmap_due_in), distance_of_date_in_words(Date.today, date))
@@ -166,7 +166,7 @@ module ApplicationHelper
     end
     content
   end
-  
+
   # Renders flash messages
   def render_flash_messages
     s = ''
@@ -175,7 +175,7 @@ module ApplicationHelper
     end
     s
   end
-  
+
   # Renders tabs and their content
   def render_tabs(tabs)
     if tabs.any?
@@ -184,7 +184,7 @@ module ApplicationHelper
       content_tag 'p', l(:label_no_data), :class => "nodata"
     end
   end
-  
+
   # Renders the project quick-jump box
   def render_project_jump_box
     # Retrieve them now to avoid a COUNT query
@@ -200,7 +200,7 @@ module ApplicationHelper
       s
     end
   end
-  
+
   def project_tree_options_for_select(projects, options = {})
     s = ''
     project_tree(projects) do |project, level|
@@ -211,19 +211,19 @@ module ApplicationHelper
     end
     s
   end
-  
+
   # Yields the given block for each project with its level in the tree
   def project_tree(projects, &block)
     ancestors = []
     projects.sort_by(&:lft).each do |project|
-      while (ancestors.any? && !project.is_descendant_of?(ancestors.last)) 
+      while (ancestors.any? && !project.is_descendant_of?(ancestors.last))
         ancestors.pop
       end
       yield project, ancestors.size
       ancestors << project
     end
   end
-  
+
   def project_nested_ul(projects, &block)
     s = ''
     if projects.any?
@@ -234,7 +234,7 @@ module ApplicationHelper
         else
           ancestors.pop
           s << "</li>"
-          while (ancestors.any? && !project.is_descendant_of?(ancestors.last)) 
+          while (ancestors.any? && !project.is_descendant_of?(ancestors.last))
             ancestors.pop
             s << "</ul></li>\n"
           end
@@ -247,13 +247,13 @@ module ApplicationHelper
     end
     s
   end
-  
+
   def principals_check_box_tags(name, principals)
     s = ''
     principals.sort.each do |principal|
       s << "<label>#{ check_box_tag name, principal.id, false } #{h principal}</label>\n"
     end
-    s 
+    s
   end
 
   # Truncates and returns the string as a single line
@@ -268,7 +268,7 @@ module ApplicationHelper
   def authoring(created, author, options={})
     l(options[:label] || :label_added_time_by, :author => link_to_user(author), :age => time_tag(created))
   end
-  
+
   def time_tag(time)
     text = distance_of_time_in_words(Time.now, time)
     if @project
@@ -301,7 +301,7 @@ module ApplicationHelper
     html << (pagination_links_each(paginator, options) do |n|
       link_to_remote_content_update(n.to_s, url_param.merge(page_param => n))
     end || '')
-    
+
     if paginator.current.next
       html << ' ' + link_to_remote_content_update((l(:label_next) + ' &#187;'), url_param.merge(page_param => paginator.current.next))
     end
@@ -315,7 +315,7 @@ module ApplicationHelper
 
     html
   end
-  
+
   def per_page_links(selected=nil)
     url_param = params.dup
     url_param.clear if url_param.has_key?(:set_filter)
@@ -328,7 +328,7 @@ module ApplicationHelper
     end
     links.size > 1 ? l(:label_display_per_page, links.join(', ')) : nil
   end
-  
+
   def reorder_links(name, url)
     link_to(image_tag('2uparrow.png',   :alt => l(:label_sort_highest)), url.merge({"#{name}[move_to]" => 'highest'}), :method => :post, :title => l(:label_sort_highest)) +
     link_to(image_tag('1uparrow.png',   :alt => l(:label_sort_higher)),  url.merge({"#{name}[move_to]" => 'higher'}),  :method => :post, :title => l(:label_sort_higher)) +
@@ -340,13 +340,13 @@ module ApplicationHelper
     elements = args.flatten
     elements.any? ? content_tag('p', args.join(' &#187; ') + ' &#187; ', :class => 'breadcrumb') : nil
   end
-  
+
   def other_formats_links(&block)
     concat('<p class="other-formats">' + l(:label_export_to))
     yield Redmine::Views::OtherFormatsBuilder.new(self)
     concat('</p>')
   end
-  
+
   def page_header_title
     if @project.nil? || @project.new_record?
       h(Setting.app_title)
@@ -403,7 +403,7 @@ module ApplicationHelper
     return '' if text.blank?
 
     text = Redmine::WikiFormatting.to_html(Setting.text_formatting, text) { |macro, args| exec_macro(macro, obj, args) }
-    
+
     only_path = options.delete(:only_path) == false ? false : true
 
     # when using an image link, try to use an attachment, if possible
@@ -412,8 +412,8 @@ module ApplicationHelper
     if attachments
       attachments = attachments.sort_by(&:created_on).reverse
       text.gsub!(/src="([^\/"]+\.(bmp|gif|jpg|jpeg|png))"(\s+alt="([^"]*)")?/i) do |m|
-        filename, ext, alt, alttext = $1.downcase, $2, $3, $4 
-        
+        filename, ext, alt, alttext = $1.downcase, $2, $3, $4
+
         # search for the picture in attachments
         if found = attachments.detect { |att| att.filename.downcase == filename }
           image_url = url_for :only_path => only_path, :controller => 'attachments', :action => 'download', :id => found
@@ -663,8 +663,9 @@ module ApplicationHelper
 
   def calendar_for(field_id)
     include_calendar_headers_tags
+    idate_format = get_date_format
     image_tag("calendar.png", {:id => "#{field_id}_trigger",:class => "calendar-trigger"}) +
-    javascript_tag("Calendar.setup({inputField : '#{field_id}', ifFormat : '%Y-%m-%d', button : '#{field_id}_trigger' });")
+    javascript_tag("Calendar.setup({inputField : '#{field_id}', ifFormat : '#{date_format}', button : '#{field_id}_trigger' });")
   end
 
   def include_calendar_headers_tags
@@ -679,10 +680,10 @@ module ApplicationHelper
         else
           '' # use language
         end
-        
+
         javascript_include_tag('calendar/calendar') +
         javascript_include_tag("calendar/lang/calendar-#{current_language.to_s.downcase}.js") +
-        javascript_tag(start_of_week) +  
+        javascript_tag(start_of_week) +
         javascript_include_tag('calendar/calendar-setup') +
         stylesheet_link_tag('calendar')
       end
@@ -721,12 +722,12 @@ module ApplicationHelper
     extend helper
     return self
   end
-  
+
   def link_to_remote_content_update(text, url_params)
     link_to_remote(text,
       {:url => url_params, :method => :get, :update => 'content', :complete => 'window.scrollTo(0,0)'},
       {:href => url_for(:params => url_params)}
     )
   end
-  
+
 end
